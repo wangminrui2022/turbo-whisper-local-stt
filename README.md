@@ -1,52 +1,79 @@
-# 🚀 faster-whisper-local-stt
+# **🚀 faster-whisper-local-stt**
 
-**高性能本地音频转文本工具**  
-基于 **Faster-Whisper**（large-v3 / turbo 等模型），专为 OpenClaw Skill 开发，也支持独立命令行使用。支持单文件与**整个目录批量转录**，自动保留目录结构，输出 `.txt` 或极简 `.json` 文件。
+**高性能本地音频转文本工具** 基于 **Faster-Whisper**（支持 large-v3 / turbo 等模型），专为 OpenClaw Skill 开发，同时也完美支持独立命令行（CLI）使用。支持单文件与**整个目录批量转录**，自动保留目录结构，支持输出 .txt 或结构化 .json 文件。
 
-![Python](https://img.shields.io/badge/Python-3.10%2B-blue)
-![GPU](https://img.shields.io/badge/GPU-CUDA%2011.8%2B-green)
-![License](https://img.shields.io/badge/License-MIT-green)
+## **✨ 核心特性**
 
-## ✨ 核心特性
+* **🎯 场景全覆盖**：支持单文件极速转录与目录批量处理（自动递归遍历子文件夹）。  
+* **📦 模型自动化**：自动下载模型（如 \--model large-v3 首次运行自动从 Hugging Face 下载，并永久本地缓存）。  
+* **📂 目录结构保持**：批量处理时完全保留原目录层级（输入/子文件夹/音频.wav → 输出/子文件夹/音频.txt）。  
+* **📝 灵活输出格式**：  
+  * \--output txt → 提取纯文本内容，适合阅读。  
+  * \--output json → 严格格式 {"success": true, "text": "..."}，适合程序对接。  
+* **⚡ 极致性能优化**：内置中文优先优化、VAD 静音检测与长音频智能分段。支持 GPU（int8\_float16）加速与 CPU 运行，运行完毕自动释放显存。  
+* **🛡️ 隐私与安全**：完全本地离线运行（模型下载后无需联网），数据绝对安全。  
+* **🧩 OpenClaw 原生集成**：无缝对接 env\_manager / ensure\_package / config，Agent 可直接调用。
 
-- ✅ **单文件 / 批量目录** 一键处理（递归遍历子文件夹）
-- ✅ **自动下载模型**（`--model large-v3` 首次自动从 Hugging Face 下载，永久缓存）
-- ✅ **输出格式灵活**：
-  - `--output txt` → 纯文本 `.txt`
-  - `--output json` → 严格格式 `{"success": true, "text": "..."}`
-- ✅ **完全保留原目录结构**（`输入/子文件夹/音频.wav` → `输出/子文件夹/音频.txt`）
-- ✅ **中文优先优化** + VAD 静音检测 + 长音频智能分段
-- ✅ **自动释放显存**，支持 GPU（int8_float16）与 CPU
-- ✅ **OpenClaw 完美集成**（env_manager / ensure_package / config）
-- ✅ **隐私安全**：全部本地运行，无需联网（下载后离线）
+## **📁 项目结构**
 
-## 📁 项目结构
+faster-whisper-local-stt/  
+├── scripts/  
+│   └── transcribe.py          \# 主脚本（已集成所有核心功能）  
+├── models/                    \# 自动下载的本地模型存放目录  
+├── SKILL.md                   \# OpenClaw Skill Agent 提示词元数据  
+├── requirements.txt           \# 依赖清单  
+└── README.md                  \# 项目文档
 
-faster-whisper-local-stt/
+## **🚀 快速安装**
 
-├── scripts/
+### **方式一：作为 OpenClaw Skill（推荐）**
 
-│   └── transcribe.py          # 主脚本（已集成所有功能）
+1. 将整个文件夹放入 OpenClaw 的技能目录：\~/.openclaw/skills/faster-whisper-local-stt/  
+2. Agent 首次调用时会自动安装所需的依赖包并配置环境。
 
-├── models/                    # 自动下载的模型存放目录
+### **方式二：作为独立工具使用**
 
-├── SKILL.md                   # OpenClaw Skill 元数据
+git clone \[https://github.com/你的用户名/faster-whisper-local-stt.git\](https://github.com/你的用户名/faster-whisper-local-stt.git)  
+cd faster-whisper-local-stt  
+pip install \-r requirements.txt
 
-├── requirements.txt
+## **💻 使用指南**
 
-├── README.md                  # 你正在看的文档
+执行以下命令前，请确保已进入项目根目录。
 
-└── ...（你的 OpenClaw 配置文件）
+### **1\. 单文件转录**
 
+处理单个音频，默认自动检测语言。
 
-## 🚀 快速安装
+\# 使用简洁别名自动下载/加载模型  
+python scripts/transcribe.py \--audio\_path "F:/TestOutput/test.wav" \--model large-v3-ct2
 
-### 方式一：作为 OpenClaw Skill（推荐）
-1. 把整个文件夹放到 `~/.openclaw/skills/faster-whisper-local-stt/`
-2. 运行一次脚本（会自动安装依赖）
+\# 使用完整的 HuggingFace 仓库名  
+python scripts/transcribe.py \--audio\_path "F:/TestOutput/test.wav" \--model wangminrui2022/faster-whisper-large-v3-ct2
 
-### 方式二：独立使用
-```bash
-git clone https://github.com/你的用户名/faster-whisper-local-stt.git
-cd faster-whisper-local-stt
-pip install -r requirements.txt
+\# 使用已下载到本地的绝对路径模型（完全断网可用）  
+python scripts/transcribe.py \--audio\_path "F:/TestOutput/test.wav" \--model\_path "D:/faster-whisper-large-v3-ct2"
+
+\# 指定输出为纯文本格式（丢弃时间戳等元数据）  
+python scripts/transcribe.py \--audio\_path "F:/TestOutput/test.wav" \--model large-v3-ct2 \--output txt
+
+### **2\. 批量目录转录**
+
+当 \--audio\_path 指向一个文件夹时，程序会自动找出所有音频文件并批量转录。
+
+\# 默认输出：自动在源目录同级创建 \`原目录名\_transcripts\` 文件夹保存结果  
+python scripts/transcribe.py \--audio\_path "F:/TestOutput" \--model large-v3-ct2
+
+\# 自定义输出：通过 \--output\_dir 指定保存路径，内部会保持源文件的子目录结构  
+python scripts/transcribe.py \--audio\_path "F:/TestOutput" \--output\_dir "F:/TestOutput/transcripts" \--model\_path "D:/models/large-v3-turbo"
+
+## **⚙️ 核心参数对照表**
+
+| 参数名 | 说明 | 示例 |
+| :---- | :---- | :---- |
+| \--audio\_path | **【必填】** 音频文件路径，或包含音频的文件夹路径。 | "F:/TestOutput/test.wav" |
+| \--model | 模型名称或 HuggingFace 仓库名（首次需联网下载）。 | large-v3-ct2 |
+| \--model\_path | 本地模型绝对路径（与 \--model 二选一，优先使用此项）。 | "D:/model-path" |
+| \--output\_dir | 批量处理时指定结果存放路径，单文件处理时通常无需填写。 | "F:/TestOutput/transcripts" |
+| \--output | 输出格式。可选 txt (纯文本) 或 json (结构化数据)。默认输出完整元数据。 | txt |
+
