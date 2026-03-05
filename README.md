@@ -33,7 +33,7 @@ faster-whisper-local-stt/
 
 ### **方式二：作为独立工具使用**
 
-git clone \[https://github.com/你的用户名/faster-whisper-local-stt.git\](https://github.com/你的用户名/faster-whisper-local-stt.git)  
+git clone \[https://github.com/wangminrui2022/faster-whisper-local-stt.git\](https://github.com/wangminrui2022/faster-whisper-local-stt.git)  
 cd faster-whisper-local-stt  
 pip install \-r requirements.txt
 
