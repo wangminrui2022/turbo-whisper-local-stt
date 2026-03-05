@@ -4,8 +4,10 @@
 Skill Name: Turbo-Whisper-Local-STT
 Author: 王岷瑞 / https://github.com/wangminrui2022
 License: Apache License
-Description: 
-
+Description: 高性能、完全离线、支持批量处理的中文语音转录神器。
+基于 Faster-Whisper（CTranslate2）实现，支持自动下载模型、GPU 加速、VAD 长音频智能分段。
+单文件/整个文件夹一键转录，按原目录结构保存 `.txt` 或 `.json` 文件（JSON 严格为 `{ "success": true, "text": "..." }`）。
+专为 OpenClaw Skill 设计，也可独立使用。
 """
 
 import argparse
