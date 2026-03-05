@@ -2,7 +2,7 @@
 # -*- coding: utf-8, -*-
 
 """
-Skill Name: PureVocals_UVR_Automator
+Skill Name: Turbo-Whisper-Local-STT
 Author: 王岷瑞/https://github.com/wangminrui2022
 License: Apache License
 Description: 这段代码是一个 Python 脚本的环境初始化与自动化配置模块。
@@ -37,7 +37,7 @@ print(f"模型保存路径: {model_path}")
 
 # --- 日志系统初始化 ---
 # 将配置好的 LOG_DIR 传给 LoggerManager
-logger = LoggerManager.setup_logger(logger_name="mp4-to-mp3-extractor")
+logger = LoggerManager.setup_logger(logger_name="turbo-whisper-local-stt")
 
 def check_python_version():
     """严格检测 Python 版本，只支持 3.10 ~ 3.12"""
@@ -184,9 +184,9 @@ def setup_venv():
     # 如果上面没找到（极少数情况），尝试从 env_manager 所在目录向上找
     if not main_script.exists() or "env_manager" in main_script.name.lower():
         possible_paths = [
-            Path.cwd() / "scripts" / "extract.py",
-            Path.cwd() / "extract.py",
-            Path(__file__).parent.parent / "scripts" / "extract.py",   # 项目根目录/scripts/extract.py
+            Path.cwd() / "scripts" / "transcribe.py",
+            Path.cwd() / "transcribe.py",
+            Path(__file__).parent.parent / "scripts" / "transcribe.py",   # 项目根目录/scripts/transcribe.py
         ]
         for p in possible_paths:
             if p.exists():

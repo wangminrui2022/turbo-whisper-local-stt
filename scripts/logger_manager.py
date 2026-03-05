@@ -2,7 +2,7 @@
 # -*- coding: utf-8, -*-
 
 """
-Skill Name: PureVocals_UVR_Automator
+Skill Name: Turbo-Whisper-Local-STT
 Author: 王岷瑞/https://github.com/wangminrui2022
 License: Apache License
 Description: 这段代码定义了一个名为 LoggerManager 的类，专门用于自动化配置和管理日志系统。

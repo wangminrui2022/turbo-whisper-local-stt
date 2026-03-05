@@ -2,7 +2,7 @@
 # -*- coding: utf-8, -*-
 
 """
-Skill Name: PureVocals_UVR_Automator
+Skill Name: Turbo-Whisper-Local-STT
 Author: 王岷瑞/https://github.com/wangminrui2022
 License: Apache License
 Description: 自动安装缺失 Python 包的便捷工具函数（国内清华镜像加速）

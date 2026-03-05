@@ -1,3 +1,13 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Skill Name: Turbo-Whisper-Local-STT
+Author: 王岷瑞 / https://github.com/wangminrui2022
+License: Apache License
+Description: 
+
+"""
+
 import argparse
 import json
 from pathlib import Path
