@@ -21,3 +21,25 @@
 - ✅ **隐私安全**：全部本地运行，无需联网（下载后离线）
 
 ## 📁 项目结构
+
+faster-whisper-local-stt/
+├── scripts/
+│   └── transcribe.py          # 主脚本（已集成所有功能）
+├── models/                    # 自动下载的模型存放目录
+├── SKILL.md                   # OpenClaw Skill 元数据
+├── requirements.txt
+├── README.md                  # 你正在看的文档
+└── ...（你的 OpenClaw 配置文件）
+
+
+## 🚀 快速安装
+
+### 方式一：作为 OpenClaw Skill（推荐）
+1. 把整个文件夹放到 `~/.openclaw/skills/faster-whisper-local-stt/`
+2. 运行一次脚本（会自动安装依赖）
+
+### 方式二：独立使用
+```bash
+git clone https://github.com/你的用户名/faster-whisper-local-stt.git
+cd faster-whisper-local-stt
+pip install -r requirements.txt
