@@ -14,6 +14,16 @@
 * **🛡️ 隐私与安全**：完全本地离线运行（模型下载后无需联网），数据绝对安全。  
 * **🧩 OpenClaw 原生集成**：无缝对接 env\_manager / ensure\_package / config，Agent 可直接调用。
 
+## **📥 常用模型下载**
+
+脚本支持通过 \--model 参数自动从 Hugging Face 下载。如果环境无法联网，请手动下载后通过 \--model\_path 指定目录。
+
+| 模型规模 | 推荐场景 | Hugging Face 下载地址 |
+| :---- | :---- | :---- |
+| **Base** | 低配设备 / 追求极速 | [wangminrui2022/faster-whisper-base-ct2](https://huggingface.co/wangminrui2022/faster-whisper-base-ct2) |
+| **Large-v3** | 高精度需求 / 会议转录 | [wangminrui2022/faster-whisper-large-v3-ct2](https://huggingface.co/wangminrui2022/faster-whisper-large-v3-ct2) |
+| **Turbo** | 性能与精度的平衡点 | [deepdml/faster-whisper-large-v3-turbo-ct2](https://huggingface.co/deepdml/faster-whisper-large-v3-turbo-ct2) |
+
 ## **📁 项目结构**
 
 faster-whisper-local-stt/  
@@ -54,7 +64,7 @@ python scripts/transcribe.py \--audio\_path "F:/TestOutput/test.wav" \--model wa
 \# 使用已下载到本地的绝对路径模型（完全断网可用）  
 python scripts/transcribe.py \--audio\_path "F:/TestOutput/test.wav" \--model\_path "D:/faster-whisper-large-v3-ct2"
 
-\# 指定输出为纯文本格式（丢弃时间戳等元数据）  
+\# 指定输出为纯文本格式  
 python scripts/transcribe.py \--audio\_path "F:/TestOutput/test.wav" \--model large-v3-ct2 \--output txt
 
 ### **2\. 批量目录转录**
