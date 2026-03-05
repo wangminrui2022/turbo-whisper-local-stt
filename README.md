@@ -23,12 +23,19 @@
 ## 📁 项目结构
 
 faster-whisper-local-stt/
+
 ├── scripts/
+
 │   └── transcribe.py          # 主脚本（已集成所有功能）
+
 ├── models/                    # 自动下载的模型存放目录
+
 ├── SKILL.md                   # OpenClaw Skill 元数据
+
 ├── requirements.txt
+
 ├── README.md                  # 你正在看的文档
+
 └── ...（你的 OpenClaw 配置文件）
 
 
