@@ -19,6 +19,7 @@ from logger_manager import LoggerManager
 import env_manager
 import ensure_package
 from config import MODEL_DIR, SKILL_ROOT, VENV_DIR
+import os  # 用于跨平台换行符）
 
 # ==================== 自动安装依赖（已适配你的 ensure_package） ====================
 ensure_package.pip("faster_whisper", "faster_whisper", "WhisperModel")
@@ -110,8 +111,21 @@ def transcribe_file(model, audio_path: Path) -> str:
         vad_parameters=dict(min_silence_duration_ms=500),
         word_timestamps=False
     )
-
-    full_text = " ".join(segment.text.strip() for segment in segments)
+    # 【修复重点】：检查字面量 "\\n" (命令行传入时的原样)
+    if args.separator == "\\n" or args.separator == "\n":
+        # 直接使用真正的换行符，后续写入文件时 open(..., 'w') 会自动跨平台处理
+        args.separator = "\n"  
+    print(f"当前使用的分隔符: {repr(args.separator)}") # 使用 repr 打印，可以看到真实的字符表示
+    print(f"跨平台换行符: {args.separator}")
+    # 【关键修复】：将字面量 "\n" 转换为真正的换行符
+    # 如果用户传入的是字符串 "\n"，这个操作会把它变成真正的换行控制符
+    try:
+        actual_separator = args.separator.encode().decode('unicode_escape')
+    except Exception:
+        actual_separator = args.separator
+    print(f"当前使用的真实分隔符 (repr): {repr(actual_separator)}")
+    # 拼接文本
+    full_text = args.separator.join(segment.text.strip() for segment in segments)
     return full_text.strip()
 
 def save_result(full_text: str, save_path: Path, output_format: str):
@@ -238,7 +252,8 @@ if __name__ == "__main__":
     parser.add_argument("--model", type=str, default=None, help="模型别名（large-v3-ct2 / faster-whisper-large-v3-ct2 等，自动下载）")
     parser.add_argument("--beam_size", type=int, default=5)
     parser.add_argument("--output", choices=["json", "text"], default="text")
-
+    parser.add_argument("--separator",type=str,default=chr(32),help="可指定拼接分隔符，默认一个空格（不传参时自动使用空格）") # 默认一个空格（用 chr(32) 写法，代码里一目了然）chr(32)==" "
+    
     args = parser.parse_args()
 
     # ==================== 自动下载逻辑 ====================

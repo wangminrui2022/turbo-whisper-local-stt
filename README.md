@@ -65,7 +65,10 @@ python scripts/transcribe.py \--audio\_path "F:/TestOutput/test.wav" \--model wa
 python scripts/transcribe.py \--audio\_path "F:/TestOutput/test.wav" \--model\_path "D:/faster-whisper-large-v3-ct2"
 
 \# 指定输出为纯文本格式  
-python scripts/transcribe.py \--audio\_path "F:/TestOutput/test.wav" \--model large-v3-ct2 \--output txt
+python scripts/transcribe.py \--audio\_path "F:/TestOutput/test.wav" \--model large-v3-ct2 \--output text
+
+\# 指定每句换行显示
+python scripts/transcribe.py \--audio\_path "F:/TestOutput/test.wav" \--model large-v3-ct2 \--output text \--separator "\n"
 
 ### **2\. 批量目录转录**
 
@@ -86,4 +89,4 @@ python scripts/transcribe.py \--audio\_path "F:/TestOutput" \--output\_dir "F:/T
 | \--model\_path | 本地模型绝对路径（与 \--model 二选一，优先使用此项）。 | "D:/model-path" |
 | \--output\_dir | 批量处理时指定结果存放路径，单文件处理时通常无需填写。 | "F:/TestOutput/transcripts" |
 | \--output | 输出格式。可选 txt (纯文本) 或 json (结构化数据)。默认输出完整元数据。 | txt |
-
+| \--separator | 句子间隔和换行符。可以使用"\n"为句子换行显示，默认句子用空格间隔。 | "\n" |
