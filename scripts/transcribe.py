@@ -15,11 +15,11 @@ import json
 from pathlib import Path
 import gc
 import sys
-from logger_manager import LoggerManager
 import env_manager
 import ensure_package
 from config import MODEL_DIR, SKILL_ROOT, VENV_DIR
 import os  # 用于跨平台换行符）
+from logger_manager import LoggerManager
 
 # ==================== 自动安装依赖（已适配你的 ensure_package） ====================
 ensure_package.pip("faster_whisper", "faster_whisper", "WhisperModel")
@@ -32,6 +32,7 @@ import torch
 from huggingface_hub import snapshot_download
 from tqdm import tqdm
 
+logger = LoggerManager.setup_logger(logger_name="turbo-whisper-local-stt")
 # ==================== 模型名称映射表（已加入你的专属模型） ====================
 MODEL_MAPPING = {
     "large-v3-ct2": "wangminrui2022/faster-whisper-large-v3-ct2",   # ← 模型（推荐别名）
@@ -55,11 +56,11 @@ def download_model(model_name: str, models_dir: Path) -> str:
         local_dir = models_dir / model_name.replace("/", "_")
 
     if local_dir.exists() and any(local_dir.iterdir()):
-        print(f"✅ 模型已存在: {local_dir}")
+        logger.info(f"✅ 模型已存在: {local_dir}")
         return str(local_dir)
 
-    print(f"🔽 正在从 Hugging Face 下载模型: {model_name} → {repo_id}")
-    print(f"   保存路径: {local_dir}（当前models目录）")
+    logger.info(f"🔽 正在从 Hugging Face 下载模型: {model_name} → {repo_id}")
+    logger.info(f"   保存路径: {local_dir}（当前models目录）")
 
     local_dir.mkdir(parents=True, exist_ok=True)
 
@@ -69,7 +70,7 @@ def download_model(model_name: str, models_dir: Path) -> str:
             local_dir=str(local_dir),
             allow_patterns=["*"]
         )
-        print(f"✅ 下载完成！模型路径: {local_dir}")
+        logger.info(f"✅ 下载完成！模型路径: {local_dir}")
         return str(local_dir)
     except Exception as e:
         download_url = f"https://huggingface.co/{repo_id}/tree/main"
@@ -93,7 +94,7 @@ def download_model(model_name: str, models_dir: Path) -> str:
 
         # ==================== 同时输出 JSON（供 Agent 使用） ====================
         #error_msg = f"模型下载失败: {str(e)}\n手动下载地址: {download_url}\n保存目录: {local_dir}"
-        #print(json.dumps({"success": False, "error": error_msg}, ensure_ascii=False, indent=2))
+        #plogger.inforint(json.dumps({"success": False, "error": error_msg}, ensure_ascii=False, indent=2))
         sys.exit(1)
 
 
@@ -102,7 +103,7 @@ AUDIO_EXTENSIONS = {'.wav', '.mp3', '.m4a', '.flac', '.ogg', '.opus'}
 
 def transcribe_file(model, audio_path: Path) -> str:
     """单文件转录，返回完整文本"""
-    print(f"正在转录: {audio_path.name}")
+    logger.info(f"正在转录: {audio_path.name}")
     segments, info = model.transcribe(
         str(audio_path),
         language=args.language,          # 使用全局 args（批量模式复用）
@@ -115,15 +116,15 @@ def transcribe_file(model, audio_path: Path) -> str:
     if args.separator == "\\n" or args.separator == "\n":
         # 直接使用真正的换行符，后续写入文件时 open(..., 'w') 会自动跨平台处理
         args.separator = "\n"  
-    print(f"当前使用的分隔符: {repr(args.separator)}") # 使用 repr 打印，可以看到真实的字符表示
-    print(f"跨平台换行符: {args.separator}")
+    logger.info(f"当前使用的分隔符: {repr(args.separator)}") # 使用 repr 打印，可以看到真实的字符表示
+    logger.info(f"跨平台换行符: {args.separator}")
     # 【关键修复】：将字面量 "\n" 转换为真正的换行符
     # 如果用户传入的是字符串 "\n"，这个操作会把它变成真正的换行控制符
     try:
         actual_separator = args.separator.encode().decode('unicode_escape')
     except Exception:
         actual_separator = args.separator
-    print(f"当前使用的真实分隔符 (repr): {repr(actual_separator)}")
+    logger.info(f"当前使用的真实分隔符 (repr): {repr(actual_separator)}")
     # 拼接文本
     full_text = args.separator.join(segment.text.strip() for segment in segments)
     return full_text.strip()
@@ -131,11 +132,11 @@ def transcribe_file(model, audio_path: Path) -> str:
 def save_result(full_text: str, save_path: Path, output_format: str):
     """指定的格式保存文件"""
     save_path.parent.mkdir(parents=True, exist_ok=True)
-    print(f"指定的格式保存文件: {output_format}")
+    logger.info(f"指定的格式保存文件: {output_format}")
     if output_format == "text":
         save_path = save_path.with_suffix('.txt')
         save_path.write_text(full_text, encoding="utf-8")
-        print(f"✅ 已保存 TXT: {save_path}")
+        logger.info(f"✅ 已保存 TXT: {save_path}")
     else:  # json
         save_path = save_path.with_suffix('.json')
         minimal_json = {
@@ -143,7 +144,7 @@ def save_result(full_text: str, save_path: Path, output_format: str):
             "text": full_text
         }
         save_path.write_text(json.dumps(minimal_json, ensure_ascii=False, indent=2), encoding="utf-8")
-        print(f"✅ 已保存 JSON: {save_path}")
+        logger.info(f"✅ 已保存 JSON: {save_path}")
 
 def main():
     global args  # 批量模式需要访问
@@ -177,7 +178,7 @@ def main():
     if args.model is not None:
         final_model_path = download_model(args.model, models_dir)
 
-    print(f"🚀 加载模型: {final_model_path} ...")
+    logger.info(f"🚀 加载模型: {final_model_path} ...")
     model = WhisperModel(
         final_model_path,
         device="cuda" if torch.cuda.is_available() else "cpu",
@@ -193,7 +194,7 @@ def main():
         save_result(result, save_path, args.output)
 
         # 控制台输出（方便查看）
-        print("\n" + "="*50)
+        logger.info("\n" + "="*50)
         print(json.dumps(result, ensure_ascii=False, indent=2))
 
     else:
@@ -203,7 +204,7 @@ def main():
             audio_files.extend(input_path.rglob(f"*{ext}"))
             audio_files.extend(input_path.rglob(f"*{ext.upper()}"))
 
-        print(f"找到 {len(audio_files)} 个音频文件，开始批量转录...")
+        logger.info(f"找到 {len(audio_files)} 个音频文件，开始批量转录...")
 
         success_count = 0
         for audio_file in tqdm(audio_files, desc="批量转录"):
@@ -214,9 +215,9 @@ def main():
                 full_text = transcribe_file(model, audio_file)
                 save_result(full_text, save_path, args.output)
                 success_count += 1
-                print(f"   ✅ {relative} → {txt_path.name}")
+                logger.info(f"   ✅ {relative} → {txt_path.name}")
             except Exception as e:
-                print(f"   ❌ {audio_file.name} 失败: {e}")
+                logger.info(f"   ❌ {audio_file.name} 失败: {e}")
 
         # 批量完成总结
         summary = {
@@ -228,7 +229,7 @@ def main():
             "success_count": success_count,
             "success_rate": round(success_count / len(audio_files) * 100, 2) if audio_files else 0
         }
-        print("\n" + "="*50)
+        logger.info("\n" + "="*50)
         print(json.dumps(summary, ensure_ascii=False, indent=2))
 
     # ==================== 清理显存 ====================

@@ -67,7 +67,7 @@ python scripts/transcribe.py \--audio\_path "F:/TestOutput/test.wav" \--model\_p
 \# 指定输出为纯文本格式  
 python scripts/transcribe.py \--audio\_path "F:/TestOutput/test.wav" \--model large-v3-ct2 \--output text
 
-\# 指定每句换行显示
+\# 指定每句换行显示  
 python scripts/transcribe.py \--audio\_path "F:/TestOutput/test.wav" \--model large-v3-ct2 \--output text \--separator "\n"
 
 ### **2\. 批量目录转录**
@@ -90,3 +90,11 @@ python scripts/transcribe.py \--audio\_path "F:/TestOutput" \--output\_dir "F:/T
 | \--output\_dir | 批量处理时指定结果存放路径，单文件处理时通常无需填写。 | "F:/TestOutput/transcripts" |
 | \--output | 输出格式。可选 txt (纯文本) 或 json (结构化数据)。默认输出完整元数据。 | txt |
 | \--separator | 句子间隔和换行符。可以使用"\n"为句子换行显示，默认句子用空格间隔。 | "\n" |
+
+### **在 OpenClaw 聊天中**
+
+你可以直接对你的 Agent 说：
+
+请使用 turbo-whisper-local-stt 技能，将 "F:\命理学-音频-干声\猴哥说易\八字解析之食神制杀（三连关注帮看）_20260321_200349.wav" 文件提取文本，输出到 "F:\命理学-音频-干声-文本"，--model参数使用"faster-whisper-large-v3-turbo-ct2"，添加参数 --separator ","。
+
+请使用 turbo-whisper-local-stt 技能，将 "F:\命理学-音频-干声" 目录下的所有.wav文件提取文本，输出到 "F:\命理学-音频-干声-文本" ，添加参数 --separator "\n"。

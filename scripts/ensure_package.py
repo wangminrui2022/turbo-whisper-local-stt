@@ -20,6 +20,9 @@ Description: 自动安装缺失 Python 包的便捷工具函数（国内清华�
 
 import sys
 import subprocess
+from logger_manager import LoggerManager
+
+logger = LoggerManager.setup_logger(logger_name="turbo-whisper-local-stt")
 
 def pip(pip_pkg, import_name=None, sub_import=None):
     """
@@ -40,14 +43,14 @@ def pip(pip_pkg, import_name=None, sub_import=None):
             getattr(mod, sub_import)  # 检查子对象
         return  # 已存在，跳过
     except (ImportError, AttributeError):
-        print(f"🔧 正在安装 {pip_pkg} ...（首次运行会慢一点）")
+        logger.warning(f"🔧 正在安装 {pip_pkg} ...（首次运行会慢一点）")
         subprocess.check_call([
             sys.executable, "-m", "pip", "install",
             "--upgrade", pip_pkg,
             "-i", "https://pypi.tuna.tsinghua.edu.cn/simple",
             "--quiet"
         ])
-        print(f"✅ {pip_pkg} 安装完成！")
+        logger.warning(f"✅ {pip_pkg} 安装完成！")
 
 def pip_v(pkg, version=None):
     #ensure_package.pip_v("urllib3", version="<2")
@@ -55,17 +58,17 @@ def pip_v(pkg, version=None):
     import_name = pkg  # 默认导入名同 pip 名 
     try:
         __import__(import_name)
-        print(f"✅ {pkg} 已安装")
+        logger.info(f"✅ {pkg} 已安装")
         return
     except ImportError:
         install_str = pkg
         if version:
             install_str += version  # 如 "urllib3<2"
-        print(f"🔧 正在安装 {install_str} ...")
+        logger.warning(f"🔧 正在安装 {install_str} ...")
         subprocess.check_call([
             sys.executable, "-m", "pip", "install",
             install_str,
             "-i", "https://pypi.tuna.tsinghua.edu.cn/simple",
             "--quiet"
         ])
-        print(f"✅ {pkg} 安装完成！")
+        logger.warning(f"✅ {pkg} 安装完成！")
