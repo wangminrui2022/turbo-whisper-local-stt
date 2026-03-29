@@ -51,10 +51,24 @@ def check_python_version():
         sys.exit(1)
     logger.info(f"✅ Python 版本检测通过: {major}.{minor}")
 
+def is_torch_gpu_installed(python_exe):
+    """检测虚拟环境中是否安装了 GPU 版本 PyTorch"""
+    try:
+        result = subprocess.run(
+            [str(python_exe), "-c",
+             "import torch; print(torch.version.cuda or 'cpu')"],
+            capture_output=True, text=True, timeout=10
+        )
+        if result.returncode == 0:
+            cuda_version = result.stdout.strip()
+            if cuda_version.lower() != "cpu" and cuda_version != "":
+                return True
+    except Exception:
+        pass
+    return False
 
 def setup_venv():
     """自动创建虚拟环境 + 切换到 venv 执行主脚本（强化防递归 + 绝对路径版）"""
-    
     # ==================== 防递归保护 ====================
     if os.getenv("RUNNING_IN_VENV") == "true":
         logger.info(f"✅ 已成功在虚拟环境中运行: {sys.executable}")
@@ -81,7 +95,12 @@ def setup_venv():
         logger.info("正在升级 pip...")
         subprocess.check_call([str(venv_python), "-m", "pip", "install", "--upgrade", "pip"])
 
-    # ==================== 修复版 GPU 检测（解析完整 nvidia-smi） ====================
+    # ==================== 检查 PyTorch GPU 是否已安装 ====================
+    if Path(venv_python).exists() and is_torch_gpu_installed(venv_python):
+        logger.info("✅ 虚拟环境中已有 GPU 版 PyTorch，无需重新安装")
+    else:
+        logger.info("ℹ️ 虚拟环境中 PyTorch 不是 GPU 版本，将重新安装 GPU 版")
+        # ==================== 修复版 GPU 检测（解析完整 nvidia-smi） ====================
         logger.info("检测 GPU 和 CUDA 版本...")
         has_gpu = False
         cuda_ver = "unknown"
@@ -135,8 +154,8 @@ def setup_venv():
                 "12.7": "cu126",
                 "12.8": "cu128",
                 "12.9": "cu128",
-                "13.0": "cu121",  # 兼容 13.x
-                "13.1": "cu121",  # ← 你的 13.1 走这里（官方推荐，稳定兼容）
+                "13.0": "cu129",
+                "13.1": "cu129",
             }
             wheel = cuda_map.get(major_minor, "cu121")  # 默认 cu121 for 13+
             index_url = f"https://download.pytorch.org/whl/{wheel}"
