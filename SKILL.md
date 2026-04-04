@@ -30,5 +30,5 @@ metadata:
 3. **调用命令**：使用以下兼容性命令启动脚本（优先 python3，失败则 python）。脚本会自动创建虚拟环境、检测 GPU 并安装对应版本。
 
    ```bash
-   (python3 scripts/audio_to_text.py --audio_path "<音频路径>" [--output_dir "<输出目录>"] [--language <zh/en>] [--model_path "<模型路径>"] [--output <json/text>] [--beam_size 5] [--separator " "]) || (python scripts/audio_to_text.py --audio_path "<音频路径>" [--output_dir "<输出目录>"] [--language <zh/en>] [--model_path "<模型路径>"] [--output <json/text>] [--beam_size 5] [--separator " "])
+   (python3 scripts/transcribe.py --audio_path "<音频路径>" [--output_dir "<输出目录>"] [--language <zh/en>] [--model_path "<模型路径>"] [--output <json/text>] [--beam_size 5] [--separator " "]) || (python scripts/transcribe.py --audio_path "<音频路径>" [--output_dir "<输出目录>"] [--language <zh/en>] [--model_path "<模型路径>"] [--output <json/text>] [--beam_size 5] [--separator " "])
 
