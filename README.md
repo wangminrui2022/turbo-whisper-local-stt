@@ -95,6 +95,9 @@ python scripts/transcribe.py \--audio\_path "F:/TestOutput" \--output\_dir "F:/T
 
 你可以直接对你的 Agent 说：
 
-请使用 turbo-whisper-local-stt 技能，将 "F:\命理学-音频-干声\猴哥说易\八字解析之食神制杀（三连关注帮看）_20260321_200349.wav" 文件提取文本，输出到 "F:\命理学-音频-干声-文本"，--model参数使用"faster-whisper-large-v3-turbo-ct2"，添加参数 --separator ","。
+帮我把这个音频转成文字 F:\命理学-音频-干声\猴哥说易\月支月令如何看一个人事业！_20260329_200421.wav，使用换行符号"\n"，保存到 F:\测试音频
 
-请使用 turbo-whisper-local-stt 技能，将 "F:\命理学-音频-干声" 目录下的所有.wav文件提取文本，输出到 "F:\命理学-音频-干声-文本" ，添加参数 --separator "\n"。
+语音转文本，这个文件夹 F:\命理学-音频-干声
+
+转录会议录音 F:\命理学-音频-干声\猴哥说易\月支月令如何看一个人事业！_20260329_200421.wav 输出成 json
+
