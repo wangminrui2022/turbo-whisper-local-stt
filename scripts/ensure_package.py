@@ -30,7 +30,7 @@ def fix_setuptools_for_legacy_packages():
     try:
         subprocess.check_call([
             sys.executable, "-m", "pip", "install",
-            "--quiet", "--force-reinstall", "setuptools<=81.2.0", "wheel"
+            "--verbose", "--force-reinstall", "setuptools<=81.2.0", "wheel"
         ])
         logger.info("✅ setuptools 已切换到兼容版本 (<=81.2.0)")
     except Exception as e:
@@ -131,7 +131,7 @@ def _install_package(spec: str, check_name: str, fallback_zip: str = None):
         sys.executable, "-m", "pip", "install",
         "--upgrade",
         spec,
-        "--quiet"
+        "--verbose"
     ]
 
     # git+、http、.zip、.whl 等特殊安装方式不使用清华镜像，避免源冲突或构建问题
@@ -164,7 +164,7 @@ def _install_package(spec: str, check_name: str, fallback_zip: str = None):
                 try:
                     cmd_fallback = [
                         sys.executable, "-m", "pip", "install",
-                        "--upgrade", fallback_zip, "--quiet"
+                        "--upgrade", fallback_zip, "--verbose"
                     ]
                     subprocess.check_call(cmd_fallback)
                     logger.info(f"✅ 使用本地包 {fallback_zip} 安装成功！")
@@ -285,7 +285,7 @@ def pip_v(pkg: str, version: str = None):
             sys.executable, "-m", "pip", "install",
             install_str,
             "-i", "https://pypi.tuna.tsinghua.edu.cn/simple",
-            "--quiet"
+            "--verbose"
         ])
         logger.info(f"✅ {pkg} 安装完成！")
         
