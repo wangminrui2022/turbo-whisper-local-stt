@@ -262,6 +262,10 @@ def main():
     if args.model is not None:
         final_model_path = download_model(args.model, models_dir)
 
+    # 如果还是空，强制使用 large-v3-ct2 模型
+    if final_model_path is None:
+        final_model_path = download_model("large-v3-ct2", models_dir)
+
     logger.info(f"🚀 加载模型: {final_model_path} ...")
     model = WhisperModel(
         final_model_path,
@@ -349,7 +353,7 @@ if __name__ == "__main__":
     parser.add_argument("--audio_path", type=str, required=True, help="音频文件绝对路径")
     parser.add_argument("--output_dir", type=str, default=None, help="输出目录（批量模式推荐指定，单文件默认同目录）")
     parser.add_argument("--language", type=str, default=None, help="语言提示 (zh/en 等)")
-    parser.add_argument("--model_path", type=str, default="D:/faster-whisper-large-v3-ct2", help="手动指定本地模型路径（优先级最高）")
+    parser.add_argument("--model_path", type=str, default=None, help="手动指定本地模型路径（优先级最高）")
     parser.add_argument("--model", type=str, default=None, help="模型别名（large-v3-ct2 / faster-whisper-large-v3-ct2 等，自动下载）")
     parser.add_argument("--beam_size", type=int, default=5)
     parser.add_argument("--output", choices=["json", "text"], default="text")
@@ -360,13 +364,5 @@ if __name__ == "__main__":
     parser.add_argument("--lang", type=str, default="ZH", choices=["ZH", "EN"], help="语言代码")
     
     args = parser.parse_args()
-
-    # ==================== 自动下载逻辑 ====================
-    models_dir = Path(SKILL_ROOT) / "models"     # ← 当前 Skill 的 models 目录
-    models_dir.mkdir(parents=True, exist_ok=True)
-
-    final_model_path = args.model_path
-    if args.model is not None:  # 只在传入 --model 时下载（移除 elif Bug）
-        final_model_path = download_model(args.model, models_dir)
 
     main()
